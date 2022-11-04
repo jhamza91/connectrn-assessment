@@ -137,3 +137,17 @@ option {
   padding: 1rem;
 }
 
+.error-msg {
+  background-color: rgba(255, 162, 0, 0.2);
+  color: rgb(65, 52, 52);
+  font-size: small;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.error-msg span {
+  padding-right: 1rem;
+}
+
