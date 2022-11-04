@@ -13,10 +13,12 @@ const nurseList = JSON.parse(
 
 const app = express();
 
-app.use("/frontend", express.static("dist/frontend/"));
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.resolve(__dirname, "../dist")));
+}
 
 app.get("/", (req, res) => {
-  return res.status(200).sendFile(path.join(__dirname, "../src/index.html"));
+  return res.status(200).sendFile(path.join(__dirname, "../public/index.html"));
 });
 
 /**
