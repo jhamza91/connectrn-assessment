@@ -1,35 +1,55 @@
 import { useState, useEffect } from "react";
-// import Portal from "./Portal";
 
 const Modal = ({ shifts, nurses, toggleModal }) => {
   const [selectedShift, setSelectedShift] = useState("");
   const [selectedNurse, setSelectedNurse] = useState("");
+  const [qualErrorMsg, setQualErrorMsg] = useState(false);
+  const [schedErrorMsg, setSchedErrorMsg] = useState(false);
 
   useEffect(() => {
     return () => {
+      // reset selected shift & nurse after modal close
       setSelectedShift("");
       setSelectedNurse("");
-      console.log("nurse after close", selectedNurse);
-      console.log("shift after close", selectedShift);
     };
   }, []);
 
+  const nurseQualsVerified = () => {
+    const quals = {
+      CNA: 1,
+      LPN: 2,
+      RN: 3,
+    };
+    const shiftData = shifts.filter((shift) => shift.id == selectedShift);
+    const nurseData = nurses.filter((nurse) => nurse.id == selectedNurse);
+    return (
+      quals[shiftData[0].qual_required] <= quals[nurseData[0].qualification]
+    );
+  };
+
+  // const nurseSchedVerified = async () => {
+  //   const nurseData = nurses.filter((nurse) => nurse.id === selectedNurse)[0];
+  //   const assignedShifts = shifts.filter(
+  //     (shift) => shift.nurse_id === nurseData.id
+  //   );
+  // };
+
   const assignShift = async () => {
-    console.log("selectedShift", selectedShift);
-    console.log("selectedNurse", selectedNurse);
+    // close modal windown when 'save assignment' clicked
     toggleModal();
+    // update database with assignment
     try {
       await fetch(`/shifts/${selectedShift}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: {
+        body: JSON.stringify({
           nurseID: selectedNurse,
-        },
+        }),
       });
     } catch (err) {
-      console.log("error sending shift update to database: ", err);
+      console.error("error saving shift: ", err);
     }
   };
 
@@ -43,14 +63,18 @@ const Modal = ({ shifts, nurses, toggleModal }) => {
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            assignShift();
+            // if nurse is qualified & available, submit form
+            if (nurseQualsVerified()) assignShift();
+            // if not, display error message(s)
+            if (!nurseQualsVerified()) setQualErrorMsg(true);
+            // if (!nurseSchedVerified()) setSchedErrorMsg(true);
           }}
         >
           <label htmlFor="shift">
             <p>Shift</p>
             <select
               id="shift"
-              // value={selectedShift}
+              value={selectedShift}
               onChange={(e) => setSelectedShift(e.target.value)}
             >
               <option />
@@ -79,6 +103,9 @@ const Modal = ({ shifts, nurses, toggleModal }) => {
             </select>
           </label>
           <button>SAVE ASSIGNMENT</button>
+          {qualErrorMsg ? (
+            <div>This nurse isn't qualified to work the chosen shift</div>
+          ) : null}
         </form>
       </div>
     </div>

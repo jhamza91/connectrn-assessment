@@ -34,7 +34,7 @@ const ShiftTable = ({ shifts, nurses }) => {
           </tr>
         </thead>
         <tbody>
-          {shifts.length
+          {shifts.length && nurses.length
             ? shifts.map((shift) => {
                 const nurse = nurses.filter(
                   (nurse) => nurse.id === shift.nurse_id
@@ -43,7 +43,7 @@ const ShiftTable = ({ shifts, nurses }) => {
                 return (
                   <tr key={shift.id}>
                     <td>{shift.name}</td>
-                    <td>{date}</td>
+                    <td>{shift.start}</td>
                     <td>{shift.end}</td>
                     <td>{shift.qual_required}</td>
                     {assigned ? (
