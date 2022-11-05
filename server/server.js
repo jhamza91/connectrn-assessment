@@ -10,13 +10,17 @@ const shiftList = JSON.parse(
 const nurseList = JSON.parse(
   fs.readFileSync(path.resolve(__dirname, "nurse_list.json"), "utf8")
 );
-
 const app = express();
 
-app.use("/frontend", express.static("dist/frontend/"));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.resolve(__dirname, "../dist")));
+}
 
 app.get("/", (req, res) => {
-  return res.status(200).sendFile(path.join(__dirname, "../src/index.html"));
+  return res.status(200).sendFile(path.join(__dirname, "../public/index.html"));
 });
 
 /**
@@ -29,7 +33,7 @@ app.get("/shifts", (req, res) => {
     console.info("Successfully delivered shift list");
   } else {
     res.status(500).send({ error: "Server blew up" });
-    console.error("Oh no! The send failed!");
+    console.error("Oh no! The shift send failed!");
   }
 });
 
@@ -43,7 +47,7 @@ app.get("/nurses", (req, res) => {
     console.info("Successfully delivered nurse list");
   } else {
     res.status(500).send({ error: "Server blew up" });
-    console.error("Oh no! The send failed!");
+    console.error("Oh no! The nurse send failed!");
   }
 });
 

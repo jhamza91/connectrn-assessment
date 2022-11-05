@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import ShiftTable from "./ShiftTable";
 import Modal from "./Modal";
-import shiftList from "./data/shift_list.json";
-import nurseList from "./data/nurse_list.json";
 
 function App() {
   const [shifts, setShifts] = useState([]);
@@ -10,6 +8,7 @@ function App() {
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
+    // fetch list of shifts and nurses and save to state on app load
     requestShiftData();
     requestNurseData();
   }, []);
@@ -19,28 +18,20 @@ function App() {
   };
 
   const requestShiftData = async () => {
-    /* WHEN SERVER IS CONNECTED */
-    // const res = await fetch("/shifts");
-    // const data = await res.json();
-    // setShifts(data);
-
-    /* INTERIM WORKAROUND */
-    setShifts(shiftList);
+    const res = await fetch("/shifts");
+    const data = await res.json();
+    setShifts(data);
   };
   const requestNurseData = async () => {
-    /* WHEN SERVER IS CONNECTED */
-    // const res = await fetch("/nurses");
-    // const data = await res.json();
-    // setNurses(data);
-
-    /* INTERIM WORKAROUND */
-    setNurses(nurseList);
+    const res = await fetch("/nurses");
+    const data = await res.json();
+    setNurses(data);
   };
 
   return (
     <div className="App">
       <header>
-        <h1>RN Shift Schedule</h1>
+        <h1>Nurse Shift Schedule</h1>
       </header>
       <button onClick={toggleModal}>SET SHIFT ASSIGNMENT</button>
       <ShiftTable shifts={shifts} nurses={nurses} />
