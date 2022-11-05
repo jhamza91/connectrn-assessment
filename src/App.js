@@ -8,6 +8,7 @@ function App() {
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
+    // fetch list of shifts and nurses and save to state on app load
     requestShiftData();
     requestNurseData();
   }, []);
@@ -30,7 +31,7 @@ function App() {
   return (
     <div className="App">
       <header>
-        <h1>RN Shift Schedule</h1>
+        <h1>Nurse Shift Schedule</h1>
       </header>
       <button onClick={toggleModal}>SET SHIFT ASSIGNMENT</button>
       <ShiftTable shifts={shifts} nurses={nurses} />
